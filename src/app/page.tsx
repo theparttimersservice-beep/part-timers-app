@@ -1,187 +1,206 @@
+'use client'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase'
+import { useRouter } from 'next/navigation'
 
-export default function Home() {
+const CATEGORIES = [
+  { icon: '🌾', cn: 'ଚାଷ', cor: 'Farming', slug: 'farming' },
+  { icon: '🐟', cn: 'ମାଛ', cor: 'Fish & Aqua', slug: 'fish' },
+  { icon: '🐓', cn: 'ପୋଲ୍ଟ୍ରି', cor: 'Poultry', slug: 'poultry' },
+  { icon: '🪡', cn: 'SHG', cor: 'Women Groups', slug: 'shg' },
+  { icon: '📚', cn: 'ଶିକ୍ଷା', cor: 'Tuition', slug: 'education' },
+  { icon: '🔧', cn: 'ମିସ୍ତ୍ରି', cor: 'Repair', slug: 'repair' },
+  { icon: '🚜', cn: 'ଟ୍ରାକ୍ଟର', cor: 'Tractor', slug: 'tractor' },
+  { icon: '📷', cn: 'ଫଟୋ', cor: 'Photo/Video', slug: 'photo' },
+  { icon: '🏗️', cn: 'ନିର୍ମାଣ', cor: 'Construction', slug: 'construction' },
+  { icon: '🚗', cn: 'ଯାନ', cor: 'Transport', slug: 'transport' },
+  { icon: '🍽️', cn: 'ଖାଦ୍ୟ', cor: 'Food', slug: 'food' },
+  { icon: '⚡', cn: 'ଇଲେକ୍ଟ୍ରିକ', cor: 'Electrician', slug: 'electric' },
+  { icon: '💧', cn: 'ଜଳ', cor: 'Plumber', slug: 'plumber' },
+  { icon: '🎪', cn: 'ଟେଣ୍ଟ', cor: 'Tent & Events', slug: 'tent' },
+  { icon: '🏥', cn: 'ଡାକ୍ତର', cor: 'Doctor/Health', slug: 'health' },
+  { icon: '🛒', cn: 'ବଜାର', cor: 'Buy & Sell', slug: 'marketplace' },
+  { icon: '🏪', cn: 'ହାଟ', cor: 'Weekly Haata', slug: 'haata' },
+  { icon: '🎨', cn: 'ଚିତ୍ରକ', cor: 'Painter', slug: 'painter' },
+  { icon: '🌿', cn: 'ଔଷଧ', cor: 'Pharmacy', slug: 'pharmacy' },
+  { icon: '🤝', cn: 'ଅନ୍ୟ', cor: 'Other', slug: 'other' },
+]
+
+const WORKERS = [
+  { icon: '🌾', name: 'Ramesh Behera', skill: 'ଶସ୍ୟ ଚାଷ', rate: '₹350/day', rating: '4.9', dist: 'Kendrapara' },
+  { icon: '🐟', name: 'Bijay Parida', skill: 'ମତ୍ସ୍ୟ ଚାଷ', rate: '₹400/day', rating: '4.8', dist: 'Jagatsinghpur' },
+  { icon: '🔧', name: 'Sukant Sahoo', skill: 'ମିସ୍ତ୍ରି', rate: '₹450/day', rating: '4.7', dist: 'Cuttack' },
+  { icon: '📷', name: 'Prafull Das', skill: 'ଫଟୋ/ଭିଡ଼ିଓ', rate: '₹1200/event', rating: '5.0', dist: 'Bhubaneswar' },
+  { icon: '🚜', name: 'Durga Nayak', skill: 'ଟ୍ରାକ୍ଟର', rate: '₹800/day', rating: '4.6', dist: 'Puri' },
+]
+
+export default function HomePage() {
+  const [user, setUser] = useState<any>(null)
+  const [search, setSearch] = useState('')
+  const [activeTab, setActiveTab] = useState('home')
+  const supabase = createClient()
+  const router = useRouter()
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) setUser(data.user)
+    })
+  }, [])
+
+  const filtered = CATEGORIES.filter(c =>
+    search === '' ||
+    c.cn.includes(search) ||
+    c.cor.toLowerCase().includes(search.toLowerCase())
+  )
+
   return (
-    <div style={{
-      minHeight: '100vh', background: '#F1F8E9',
-      fontFamily: 'system-ui, sans-serif'
-    }}>
-      {/* HEADER */}
-      <header style={{
-        background: '#2E7D32', padding: '16px 20px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '28px' }}>🌾</span>
-          <div>
-            <div style={{ color: 'white', fontWeight: 800, fontSize: '16px' }}>
-              The Part-Timers
-            </div>
-            <div style={{ color: '#A5D6A7', fontSize: '11px' }}>
-              ଗ୍ରାମୀଣ ସେବା ମଞ୍ଚ
-            </div>
-          </div>
-        </div>
-        <Link href="/login" style={{
-          background: 'white', color: '#2E7D32', padding: '8px 16px',
-          borderRadius: '20px', fontWeight: 700, fontSize: '13px',
-          textDecoration: 'none'
-        }}>
-          ଲଗଇନ — Login
-        </Link>
-      </header>
+    <div className="app">
 
       {/* HERO */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1B5E20, #2E7D32)',
-        padding: '40px 20px', textAlign: 'center', color: 'white'
-      }}>
-        <h1 style={{ fontSize: '26px', fontWeight: 800, margin: '0 0 8px' }}>
-          ଗ୍ରାମୀଣ ସେବା ଖୋଜନ୍ତୁ
-        </h1>
-        <p style={{ fontSize: '14px', opacity: 0.9, margin: '0 0 24px' }}>
-          Find Workers • Book Services • Sell Products
-        </p>
-        <div style={{
-          display: 'flex', background: 'white', borderRadius: '12px',
-          overflow: 'hidden', maxWidth: '400px', margin: '0 auto'
-        }}>
-          <input
-            placeholder="ଚାଷ, ମାଛ, SHG, ଡାକ୍ତର..."
-            style={{
-              flex: 1, padding: '14px 16px', border: 'none',
-              fontSize: '14px', outline: 'none'
-            }}
-          />
-          <button style={{
-            background: '#FF6F00', color: 'white', border: 'none',
-            padding: '14px 20px', fontSize: '18px', cursor: 'pointer'
-          }}>🔍</button>
+      <div className="hero">
+        <div className="hero-top">
+          <div>
+            <div className="hero-gr">ନମସ୍କାର 🙏 {user ? user.email?.split('@')[0] : 'ଅତିଥି'}</div>
+            <div className="hero-nm" style={{ fontFamily: "'Tiro Oriya', serif" }}>ଦ ପାର୍ଟ-ଟାଇମର୍ସ</div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div className="loc-chip">📍 Odisha</div>
+            {!user ? (
+              <Link href="/login" style={{ background: 'rgba(255,255,255,.2)', border: '1px solid rgba(255,255,255,.4)', color: '#fff', padding: '6px 14px', borderRadius: 20, fontSize: '.78rem', fontWeight: 700 }}>
+                ଲଗଇନ
+              </Link>
+            ) : (
+              <div className="loc-chip">✅ {user.email?.split('@')[0]}</div>
+            )}
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginTop: '16px', flexWrap: 'wrap' }}>
-          {['🌾 ଚାଷ', '🐟 ମାଛ', '🪡 SHG', '🏥 ଡାକ୍ତର', '🔧 ମିସ୍ତ୍ରି'].map(chip => (
-            <span key={chip} style={{
-              background: 'rgba(255,255,255,0.2)', color: 'white',
-              padding: '6px 14px', borderRadius: '20px', fontSize: '12px',
-              cursor: 'pointer'
-            }}>{chip}</span>
+
+        <div className="hero-row2" style={{ marginTop: 12 }}>
+          <div className="hsearch" style={{ flex: 1 }}>
+            <span style={{ fontSize: '1.1rem' }}>🔍</span>
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="ସେବା ଖୋଜନ୍ତୁ — Search services..."
+            />
+            {search && <button onClick={() => setSearch('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#999' }}>✕</button>}
+          </div>
+        </div>
+
+        {/* Quick chips */}
+        <div style={{ display: 'flex', gap: 7, marginTop: 11, flexWrap: 'wrap' }}>
+          {['🌾 ଚାଷ', '🐟 ମାଛ', '🪡 SHG', '🚜 ଟ୍ରାକ୍ଟର', '🏥 ଡାକ୍ତର'].map(chip => (
+            <button key={chip} onClick={() => setSearch(chip.split(' ')[1])}
+              style={{ background: 'rgba(255,255,255,.2)', border: '1px solid rgba(255,255,255,.3)', color: '#fff', padding: '5px 13px', borderRadius: 20, fontSize: '.73rem', fontWeight: 600, cursor: 'pointer', fontFamily: "'Baloo 2', sans-serif" }}>
+              {chip}
+            </button>
           ))}
         </div>
       </div>
 
-      {/* STATS */}
-      <div style={{
-        display: 'flex', background: '#1B5E20',
-        padding: '12px 0', overflowX: 'auto'
-      }}>
-        {[
-          { n: '55+', l: 'Workers' },
-          { n: '20', l: 'ବର୍ଗ' },
-          { n: '0%', l: 'Commission' },
-          { n: '₹10', l: 'ଆରମ୍ଭ' },
-        ].map(s => (
-          <div key={s.l} style={{
-            flex: 1, minWidth: '80px', textAlign: 'center',
-            color: 'white', borderRight: '1px solid rgba(255,255,255,0.2)',
-            padding: '4px 8px'
-          }}>
-            <div style={{ fontSize: '18px', fontWeight: 800 }}>{s.n}</div>
-            <div style={{ fontSize: '10px', opacity: 0.8 }}>{s.l}</div>
+      {/* STATS BAR */}
+      <div style={{ display: 'flex', background: '#1B5E20', borderBottom: '1px solid rgba(255,255,255,.1)' }}>
+        {[['55+', 'Workers'], ['20', 'ବର୍ଗ'], ['0%', 'Commission'], ['₹10', 'ଆରମ୍ଭ']].map(([n, l]) => (
+          <div key={l} style={{ flex: 1, textAlign: 'center', padding: '8px 4px', borderRight: '1px solid rgba(255,255,255,.15)' }}>
+            <div style={{ color: '#FFD54F', fontWeight: 800, fontSize: '1rem' }}>{n}</div>
+            <div style={{ color: 'rgba(255,255,255,.75)', fontSize: '.6rem', fontWeight: 600 }}>{l}</div>
           </div>
         ))}
       </div>
 
-      {/* CATEGORIES */}
-      <div style={{ padding: '20px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 800, color: '#1A1A1A', margin: 0 }}>
-            ସମସ୍ତ ସେବା — All Services
-          </h2>
-          <span style={{ fontSize: '12px', color: '#2E7D32', fontWeight: 600 }}>20 ବର୍ଗ</span>
-        </div>
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px'
-        }}>
-          {[
-            { icon: '🌾', label: 'ଚାଷ', sub: 'Farming', color: '#388E3C' },
-            { icon: '🐟', label: 'ମାଛ', sub: 'Fish', color: '#0277BD' },
-            { icon: '🐓', label: 'ପୋଲ୍ଟ୍ରି', sub: 'Poultry', color: '#E65100' },
-            { icon: '🪡', label: 'SHG', sub: 'Women', color: '#AD1457' },
-            { icon: '📚', label: 'ଶିକ୍ଷା', sub: 'Tuition', color: '#4527A0' },
-            { icon: '🔧', label: 'ମିସ୍ତ୍ରି', sub: 'Repair', color: '#006064' },
-            { icon: '🚗', label: 'ଯାନ', sub: 'Transport', color: '#1565C0' },
-            { icon: '🏗️', label: 'ଠିକା', sub: 'Contractor', color: '#4E342E' },
-            { icon: '⚙️', label: 'ଯନ୍ତ୍ର', sub: 'Equipment', color: '#37474F' },
-            { icon: '🍽️', label: 'ଖାଦ୍ୟ', sub: 'Food', color: '#BF360C' },
-            { icon: '🛒', label: 'ବଜାର', sub: 'Marketplace', color: '#6A1B9A' },
-            { icon: '🏪', label: 'ହାଟ', sub: 'Haata', color: '#FF6F00' },
-          ].map(cat => (
-            <div key={cat.label} style={{
-              background: 'white', borderRadius: '12px', padding: '12px 8px',
-              textAlign: 'center', cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
-            }}>
-              <div style={{
-                width: '44px', height: '44px', borderRadius: '12px',
-                background: cat.color, display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontSize: '22px', margin: '0 auto 6px'
-              }}>{cat.icon}</div>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: '#1A1A1A' }}>{cat.label}</div>
-              <div style={{ fontSize: '10px', color: '#9E9E9E' }}>{cat.sub}</div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <div className="ca">
 
-      {/* JOIN BANNER */}
-      <div style={{ padding: '0 20px 20px' }}>
-        <div style={{
-          background: 'linear-gradient(135deg, #2E7D32, #4CAF50)',
-          borderRadius: '16px', padding: '20px', color: 'white', textAlign: 'center'
-        }}>
-          <div style={{ fontSize: '32px', marginBottom: '8px' }}>🎉</div>
-          <div style={{ fontWeight: 800, fontSize: '16px', marginBottom: '4px' }}>
-            0% Commission — ଶୂନ୍ୟ ଦଲାଲ!
+        {/* HAATA LIVE BANNER */}
+        <div style={{ padding: '14px 14px 0' }}>
+          <div className="hbanner">
+            <div className="live-dot">🔴 LIVE</div>
+            <h3>ଆଜିର ହାଟ ବଜାର</h3>
+            <p>Kendrapara Haata • 12 vendors online • Today 6AM–2PM</p>
+            <button style={{ marginTop: 10, background: '#fff', color: '#1B6B3A', border: 'none', borderRadius: 9, padding: '7px 16px', fontFamily: "'Baloo 2', sans-serif", fontWeight: 700, fontSize: '.8rem', cursor: 'pointer' }}>
+              ହାଟ ଦେଖନ୍ତୁ →
+            </button>
           </div>
-          <div style={{ fontSize: '12px', opacity: 0.9, marginBottom: '16px' }}>
-            ଆଜି ଯୋଗ ଦିଅନ୍ତୁ — Join FREE today
-          </div>
-          <Link href="/login" style={{
-            background: 'white', color: '#2E7D32', padding: '10px 24px',
-            borderRadius: '20px', fontWeight: 700, fontSize: '14px',
-            textDecoration: 'none', display: 'inline-block'
-          }}>
-            ଯୋଗ ଦିଅନ୍ତୁ →
-          </Link>
         </div>
+
+        {/* CATEGORIES */}
+        <div className="sec">
+          <div className="sec-hd">
+            <div className="sec-t">
+              ସମସ୍ତ ସେବା
+              <span>All Services • {filtered.length} categories</span>
+            </div>
+          </div>
+          <div className="cat-grid">
+            {filtered.map(cat => (
+              <Link key={cat.slug} href={`/services/${cat.slug}`} style={{ textDecoration: 'none' }}>
+                <div className="cc">
+                  <div className="ci">{cat.icon}</div>
+                  <div className="cn">{cat.cn}</div>
+                  <div className="cor">{cat.cor}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* FEATURED WORKERS */}
+        <div className="sec" style={{ paddingTop: 0 }}>
+          <div className="sec-hd">
+            <div className="sec-t">
+              ଉପଲବ୍ଧ କର୍ମୀ
+              <span>Available Workers Near You</span>
+            </div>
+            <button className="see-all">ସବୁ ଦେଖ →</button>
+          </div>
+          <div className="hs">
+            {WORKERS.map(w => (
+              <div key={w.name} className="wc">
+                <div className="wav">{w.icon}</div>
+                <h4>{w.name}</h4>
+                <div className="wsk">{w.skill}</div>
+                <div className="wrt">⭐ {w.rating}</div>
+                <div className="wpr">{w.rate}</div>
+                <button className="bb" style={{ marginTop: 9, padding: '7px 0', fontSize: '.72rem' }}>
+                  ବୁକ କରନ୍ତୁ
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* PROMO BANNER */}
+        <div style={{ padding: '0 14px 14px' }}>
+          <div className="pbanner">
+            <div style={{ fontSize: '2.2rem' }}>🎉</div>
+            <div>
+              <h4>0% Commission!</h4>
+              <p>ଆଜି ଯୋଗ ଦିଅନ୍ତୁ — Join FREE today</p>
+              <Link href="/login" style={{ display: 'inline-block', marginTop: 8, background: '#fff', color: '#1A6FA8', padding: '6px 16px', borderRadius: 20, fontWeight: 700, fontSize: '.78rem' }}>
+                ଯୋଗ ଦିଅନ୍ତୁ →
+              </Link>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       {/* BOTTOM NAV */}
-      <nav style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: 'white', borderTop: '1px solid #E0E0E0',
-        display: 'flex', padding: '8px 0'
-      }}>
+      <nav className="bnav">
         {[
-          { icon: '🏠', label: 'ଘର', href: '/' },
-          { icon: '🔍', label: 'ଖୋଜ', href: '/search' },
-          { icon: '🛒', label: 'ବଜାର', href: '/marketplace' },
-          { icon: '📋', label: 'ଅର୍ଡର', href: '/orders' },
-          { icon: '👤', label: 'ପ୍ରୋଫାଇଲ', href: '/profile' },
+          { icon: '🏠', lb: 'ଘର', tab: 'home', href: '/' },
+          { icon: '🔍', lb: 'ଖୋଜ', tab: 'search', href: '/search' },
+          { icon: '📋', lb: 'ଅର୍ଡର', tab: 'orders', href: '/orders' },
+          { icon: '🔔', lb: 'ଖବର', tab: 'notif', href: '/notifications' },
+          { icon: '👤', lb: 'ପ୍ରୋଫାଇଲ', tab: 'profile', href: '/profile' },
         ].map(item => (
-          <Link key={item.href} href={item.href} style={{
-            flex: 1, display: 'flex', flexDirection: 'column',
-            alignItems: 'center', gap: '2px', textDecoration: 'none'
-          }}>
-            <span style={{ fontSize: '20px' }}>{item.icon}</span>
-            <span style={{ fontSize: '10px', color: '#5D5D5D', fontWeight: 600 }}>
-              {item.label}
-            </span>
+          <Link key={item.tab} href={item.href} className={`ni ${activeTab === item.tab ? 'on' : ''}`} onClick={() => setActiveTab(item.tab)}>
+            <span className="ic">{item.icon}</span>
+            <span className="lb">{item.lb}</span>
           </Link>
         ))}
       </nav>
 
-      <div style={{ height: '70px' }} />
     </div>
   )
 }
